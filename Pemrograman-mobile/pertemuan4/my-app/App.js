@@ -7,43 +7,18 @@ import Signup from './Screens/Signup';
 
 // Component
 export default function App() {
-  const [text, setText] = useState('');
-  const pressHandler = () => {
-    alert('Event OnPressed', 'Button Pressed');
-  }
+  // const [text, setText] = useState('');
+  // const pressHandler = () => {
+  //   alert('Event OnPressed', 'Button Pressed');
+  // }
   return (
-    <ScrollView onScroll={()=>alert('scrolling')}>
+    // <ScrollView onScroll={()=>alert('scrolling')}>
     <View style={styles.container}>
       <Text style={{color:'blue', fontSize:35}}>Hello React Native</Text>
-      <Login />
+      
       <Signup />
-      <Login />
-      <Signup />
-      <Login />
-      <Signup />
-      <Login />
-      <Signup />
-      <Login />
-      <Signup />
-      <Login />
-      <Signup />
-      <Login />
-      <Signup />
-      <Login />
-      <Signup />
-      <Login />
-      <Signup />
-      <Login />
-      <Signup />
-      <Login />
-      <Signup />
-      <Login />
-      <Signup />
-      <Login />
-      <Signup />
-      <Login />
-      <Signup />
-      <Button
+      
+      {/* <Button
         onPress={pressHandler}
         title="Press Me"
       />
@@ -52,14 +27,15 @@ export default function App() {
       onChangeText={(value) => setText(value)} 
 
       />
-      <Text>Hasil input text:{text}</Text>
+      <Text>Hasil input text:{text}</Text> */}
       
       
     </View>
-    </ScrollView>
+    // </ScrollView>
 
   );
 }
+
 // styling
 const styles = StyleSheet.create({
   container: {
