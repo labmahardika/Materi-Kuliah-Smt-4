@@ -6,4 +6,8 @@ export const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: "serif",
     },
+    flex: {
+        display: "flex",
+        padding:10,
+    },
 });
