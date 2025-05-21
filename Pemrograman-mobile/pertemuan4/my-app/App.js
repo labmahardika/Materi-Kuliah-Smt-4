@@ -1,48 +1,41 @@
-// Import dependencies
-import { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, TextInput, ScrollView } from 'react-native';
-import Login from './Screens/Login';
-import Signup from './Screens/Signup';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import HomeScreen from './screens/HomeScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-// Component
+const Drawer = createDrawerNavigator();
+
 export default function App() {
-  // const [text, setText] = useState('');
-  // const pressHandler = () => {
-  //   alert('Event OnPressed', 'Button Pressed');
-  // }
   return (
-    // <ScrollView onScroll={()=>alert('scrolling')}>
-    <View style={styles.container}>
-      <Text style={{color:'blue', fontSize:35}}>Hello React Native</Text>
-      
-      <Signup />
-      
-      {/* <Button
-        onPress={pressHandler}
-        title="Press Me"
-      />
-      <TextInput style={{borderBottomWidth:1,height:40 }}
-      placeholder='Ketik Sesuatu' 
-      onChangeText={(value) => setText(value)} 
-
-      />
-      <Text>Hasil input text:{text}</Text> */}
-      
-      
-    </View>
-    // </ScrollView>
-
+    <NavigationContainer>
+      <Drawer.Navigator
+        initialRouteName="Home"
+        screenOptions={{
+          drawerActiveTintColor: '#6200ee',
+          drawerLabelStyle: { fontSize: 16 },
+        }}
+      >
+        <Drawer.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            drawerIcon: ({ color, size }) => (
+              <Ionicons name="home-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            drawerIcon: ({ color, size }) => (
+              <Ionicons name="person-outline" size={size} color={color} />
+            ),
+          }}
+        />
+      </Drawer.Navigator>
+    </NavigationContainer>
   );
 }
-
-// styling
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-});
