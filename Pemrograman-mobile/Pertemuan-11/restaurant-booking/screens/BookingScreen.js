@@ -1,23 +1,15 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Platform,
-  Alert,
-  Pressable,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
-import tw from "twrnc";
-import { collection, addDoc } from "firebase/firestore";
-import { db } from "../firebaseConfig";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, Alert, Platform, TouchableOpacity, Pressable } from 'react-native';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import tw from 'twrnc';
 
-export default function BookingScreen({ navigation }) {
-  const [name, setName] = useState("");
+export default function BookingScreen({navigation }) {
+  const [name, setName] = useState('');
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(new Date());
-  const [guests, setGuests] = useState(1); // Initialize as a number
+  const [guests, setGuests] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
@@ -27,6 +19,7 @@ export default function BookingScreen({ navigation }) {
       setDate(selectedDate);
     }
   };
+
   const handleTimeChange = (event, selectedTime) => {
     setShowTimePicker(false);
     if (selectedTime) {
@@ -35,100 +28,118 @@ export default function BookingScreen({ navigation }) {
   };
 
   const formatDate = (date) => {
-    return date.toISOString().split("T")[0];
+    return date.toISOString().split('T')[0];
   };
+
   const formatTime = (time) => {
-    return time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
+
   const handleBooking = async () => {
-    if (!name || !guests || !date || !time) {
-      Alert.alert("Please fill all fields");
+    if (!name || !date || !time || !guests) {
+      Alert.alert('Error', 'Please fill in all fields');
       return;
     }
+
     try {
-      await addDoc(collection(db, "bookings"), {
+      await addDoc(collection(db, 'bookings'), {
         name,
-        guests: parseInt(guests),
         date: formatDate(date),
         time: formatTime(time),
+        guests: parseInt(guests),
       });
-      Alert.alert("Booking successful");
-      navigation.navigate("home");
+      Alert.alert('Success', 'Booking made successfully');
+      navigation.navigate('Home');
     } catch (error) {
-      Alert.alert("Error booking", error.message);
+      Alert.alert('Error', 'Failed to make booking');
     }
   };
-  const increamentGuests = () => {
-    if (guests < 10) {
-      setGuests((prev) => prev + 1); // Increment as a number
-    } else {
-      Alert.alert("Max guests is 10");
+
+  const incrementGuests = () => {
+    const currentGuests = parseInt(guests) || 0;
+    if (currentGuests < 10) { // Maximum 10 guests
+      setGuests((currentGuests + 1).toString());
     }
   };
-  const decreamentGuests = () => {
-    if (guests > 1) {
-      setGuests((prev) => prev - 1); // Decrement as a number
-    } else {
-      Alert.alert("Min guests is 1");
+
+  const decrementGuests = () => {
+    const currentGuests = parseInt(guests) || 0;
+    if (currentGuests > 1) { // Minimum 1 guest
+      setGuests((currentGuests - 1).toString());
     }
   };
+
   return (
-    <View style={tw`flex-1 justify-center items-center bg-white`}>
-      <Text style={tw`text-2xl font-bold mb-4`}>Book a Table</Text>
+    <View style={tw`flex-1 justify-center p-4`}>
+      <Text style={tw`text-lg font-bold mb-4`}>Book a Table</Text>
+      
       <TextInput
-        style={tw`border border-gray-300 p-2 rounded w-80 mb-4`}
+        style={tw`border p-2 mb-4 rounded-lg`}
         placeholder="Name"
         value={name}
         onChangeText={setName}
       />
-      <Pressable onPress={() => setShowDatePicker(true)}>
-        <Text style={tw`border border-gray-300 p-2 rounded w-80 mb-4`}>
-          {formatDate(date)}
+
+      <TouchableOpacity 
+        style={tw`border p-2 mb-4 rounded-lg`}
+        onPress={() => setShowDatePicker(true)}
+      >
+        <Text style={tw`text-gray-600`}>
+          {formatDate(date) || "Select Date"}
         </Text>
-      </Pressable>
+      </TouchableOpacity>
+
       {showDatePicker && (
         <DateTimePicker
           value={date}
           mode="date"
           display="default"
           onChange={handleDateChange}
+          minimumDate={new Date()}
         />
       )}
+
+      <TouchableOpacity 
+        style={tw`border p-2 mb-4 rounded-lg`}
+        onPress={() => setShowTimePicker(true)}
+      >
+        <Text style={tw`text-gray-600`}>
+          {formatTime(time) || "Select Time"}
+        </Text>
+      </TouchableOpacity>
+
       {showTimePicker && (
         <DateTimePicker
           value={time}
           mode="time"
           display="default"
           onChange={handleTimeChange}
+          is24Hour={true}
         />
       )}
-      <Pressable onPress={() => setShowTimePicker(true)}>
-        <Text style={tw`border border-gray-300 p-2 rounded w-80 mb-4`}>
-          {formatTime(time)}
-        </Text>
-      </Pressable>
 
-      <View style={tw`flex-row items-center mb-4`}>
-        <TouchableOpacity
-          style={tw`bg-red-500 p-2 rounded mr-2`}
-          onPress={decreamentGuests}
-        >
-          <Text style={tw`text-white text-lg`}>-</Text>
-        </TouchableOpacity>
-        <Text style={tw`text-lg`}>{guests}</Text>
-        <TouchableOpacity
-          style={tw`bg-green-500 p-2 rounded ml-2`}
-          onPress={increamentGuests}
-        >
-          <Text style={tw`text-white text-lg`}>+</Text>
-        </TouchableOpacity>
+      <View style={tw`mb-4`}>
+        <Text style={tw`text-gray-600 mb-2`}>Number of Guests</Text>
+        <View style={tw`flex-row items-center justify-between border rounded-lg p-2`}>
+          <Pressable
+            onPress={decrementGuests}
+            style={tw`bg-gray-200 rounded-lg p-2 w-12 items-center`}
+          >
+            <Text style={tw`text-xl font-bold`}>-</Text>
+          </Pressable>
+          
+          <Text style={tw`text-lg`}>{guests || '1'}</Text>
+          
+          <Pressable
+            onPress={incrementGuests}
+            style={tw`bg-gray-200 rounded-lg p-2 w-12 items-center`}
+          >
+            <Text style={tw`text-xl font-bold`}>+</Text>
+          </Pressable>
+        </View>
       </View>
-      <TouchableOpacity
-        style={tw`bg-blue-500 p-4 rounded`}
-        onPress={handleBooking}
-      >
-        <Text style={tw`text-white text-lg`}>Book Now</Text>
-      </TouchableOpacity>
+
+      <Button title="Book Now" onPress={handleBooking} />
     </View>
   );
 }
